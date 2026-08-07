@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Дизайн-токены Авто.ру-стиля (см. docs/ARCHITECTURE.md, §7).
+   Пока минимум — полная дизайн-система придёт на этапе вёрстки. */
+:root {
+  --green: #36b555;
+  --green-dark: #267e3b;
+  --green-soft: #9dfbb2;
+  --ink: #0c121c;
+  --muted: rgba(28, 33, 40, 0.6);
+  --surface: #ffffff;
+  --fill: #e9eaec;
+  --line: rgba(0, 0, 0, 0.1);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-brand: var(--green);
+  --color-brand-dark: var(--green-dark);
+  --color-ink: var(--ink);
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}

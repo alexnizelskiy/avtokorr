@@ -1,0 +1,337 @@
+// Avtokorr — черновик модели данных (Этап 1). Обсуждаемо.
+// Провайдер БД: PostgreSQL (Neon / Supabase / Vercel Postgres).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────── Пользователи и авторизация ───────────────────────────
+
+enum Role {
+  CLIENT
+  MANAGER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  phone     String?  @unique
+  email     String?  @unique
+  name      String?
+  avatar    String?
+  role      Role     @default(CLIENT)
+  blocked   Boolean  @default(false)
+  vkId      String?  @unique
+  yandexId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  favorites     Favorite[]
+  leads         Lead[]
+  orders        Order[]        @relation("ClientOrders")
+  managedOrders Order[]        @relation("ManagerOrders")
+  messages      Message[]
+  reviews       Review[]
+  notifications Notification[]
+  sessions      Session[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String   @unique
+  userAgent    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  codeHash  String
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+// ─────────────────────────── Автомобили ───────────────────────────
+
+enum CarStatus {
+  IN_STOCK    // В наличии
+  IN_TRANSIT  // В пути
+  SOLD        // Продан
+  ON_ORDER    // Под заказ
+}
+
+enum Country {
+  KOREA
+  JAPAN
+  CHINA
+}
+
+enum Transmission {
+  AUTOMATIC
+  MANUAL
+  ROBOT
+  CVT
+}
+
+enum Drivetrain {
+  FWD
+  RWD
+  AWD
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  HYBRID
+  ELECTRIC
+}
+
+model Car {
+  id           String       @id @default(cuid())
+  slug         String       @unique          // ЧПУ, напр. toyota-crown-2023
+  brand        String
+  model        String
+  generation   String?
+  year         Int
+  mileage      Int                            // пробег, км
+  engine       String                         // напр. "2.5 л, 184 л.с."
+  fuel         FuelType?
+  transmission Transmission
+  drivetrain   Drivetrain
+  color        String
+  country      Country
+  vin          String?
+  trim         String?                        // комплектация
+  description  String?      @db.Text
+  condition    String?      @db.Text          // состояние
+  status       CarStatus    @default(IN_STOCK)
+
+  // Финансы / история покупки
+  price          Decimal  @db.Decimal(12, 2)  // итоговая стоимость (RUB)
+  purchasePrice  Decimal? @db.Decimal(12, 2)  // цена покупки
+  deliveryPrice  Decimal? @db.Decimal(12, 2)  // стоимость доставки
+  auctionGrade   String?                      // аукционная оценка
+  purchasePlace  String?                      // место покупки
+
+  featured  Boolean  @default(false)
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  media     CarMedia[]
+  documents CarDocument[]
+  favorites Favorite[]
+  orders    Order[]
+
+  @@index([brand, model])
+  @@index([status])
+  @@index([country])
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+model CarMedia {
+  id        String    @id @default(cuid())
+  carId     String
+  car       Car       @relation(fields: [carId], references: [id], onDelete: Cascade)
+  type      MediaType @default(IMAGE)
+  url       String
+  position  Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  @@index([carId])
+}
+
+model CarDocument {
+  id        String   @id @default(cuid())
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+
+  @@index([carId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  carId     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, carId])
+}
+
+// ─────────────────────────── Заявки и заказы ───────────────────────────
+
+enum LeadType {
+  REQUEST   // Оставить заявку
+  CALC      // Получить расчёт
+  MESSAGE   // Написать менеджеру
+}
+
+enum LeadStatus {
+  NEW
+  IN_PROGRESS
+  CONVERTED
+  CLOSED
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  type      LeadType   @default(REQUEST)
+  status    LeadStatus @default(NEW)
+  name      String
+  phone     String
+  comment   String?    @db.Text
+  carId     String?
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime   @default(now())
+
+  @@index([status])
+}
+
+enum OrderStage {
+  REQUEST            // Заявка
+  SEARCH             // Поиск автомобиля
+  PURCHASE           // Покупка
+  DOCUMENTS          // Подготовка документов
+  DELIVERY_TO_PORT   // Доставка в порт
+  LOADING            // Погрузка
+  SEA_FREIGHT        // Морская перевозка
+  CUSTOMS            // Таможенное оформление
+  DELIVERY_RU        // Доставка по России
+  RECEIVED           // Получение автомобиля
+}
+
+model Order {
+  id         String       @id @default(cuid())
+  number     String       @unique          // человекочитаемый № заказа
+  clientId   String
+  client     User         @relation("ClientOrders", fields: [clientId], references: [id])
+  managerId  String?
+  manager    User?        @relation("ManagerOrders", fields: [managerId], references: [id], onDelete: SetNull)
+  carId      String?
+  car        Car?         @relation(fields: [carId], references: [id], onDelete: SetNull)
+  stage      OrderStage   @default(REQUEST)
+  location   String?                        // текущее местоположение авто
+  totalPrice Decimal?     @db.Decimal(12, 2)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  events OrderStatusEvent[]
+
+  @@index([clientId])
+  @@index([stage])
+}
+
+model OrderStatusEvent {
+  id        String     @id @default(cuid())
+  orderId   String
+  order     Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  stage     OrderStage
+  comment   String?    @db.Text
+  photos    String[]                        // URL фото
+  documents String[]                        // URL документов
+  createdAt DateTime   @default(now())
+
+  @@index([orderId])
+}
+
+// ─────────────────────────── Чат ───────────────────────────
+
+model Conversation {
+  id        String    @id @default(cuid())
+  clientId  String
+  managerId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+
+  @@index([clientId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body           String       @db.Text
+  attachments    String[]                    // URL фото/документов
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+// ─────────────────────────── Контент и уведомления ───────────────────────────
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  authorName String
+  rating    Int      @default(5)
+  body      String   @db.Text
+  photos    String[]
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum PostType {
+  BLOG
+  NEWS
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  type      PostType @default(BLOG)
+  title     String
+  excerpt   String?
+  cover     String?
+  body      String   @db.Text
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+  TELEGRAM
+}
+
+model Notification {
+  id        String              @id @default(cuid())
+  userId    String
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel   NotificationChannel @default(IN_APP)
+  title     String
+  body      String?
+  readAt    DateTime?
+  createdAt DateTime            @default(now())
+
+  @@index([userId])
+}

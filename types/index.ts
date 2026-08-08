@@ -15,6 +15,20 @@ export interface CarCardData {
   priceTrend?: "up" | "down";
 }
 
+/** Полные данные для страницы автомобиля. */
+export interface CarDetail extends CarCardData {
+  brand: string;
+  engine: string; // «3.5 л · 380 л.с.»
+  transmission: string; // «Автомат»
+  drivetrain: string; // «Полный (AWD)»
+  color: string;
+  vin: string; // маскированный
+  auctionGrade: string; // «4.5 / B»
+  photos: number;
+  videos: number;
+  description: string;
+}
+
 export interface Story {
   id: string;
   title: string;
@@ -25,5 +39,5 @@ export interface Story {
 export interface Brand {
   name: string;
   country: Country;
-  logo: string; // буква-заглушка, пока нет реальных логотипов
+  logo: string;
 }

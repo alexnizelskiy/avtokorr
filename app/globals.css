@@ -646,10 +646,240 @@ a {
   color: var(--link);
 }
 
+/* ============ Catalog page + Car detail ============ */
+.crumbs {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.crumbs a {
+  color: var(--link);
+}
+.crumbs span {
+  margin: 0 4px;
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+.page-sub {
+  color: var(--muted);
+  font-size: 15px;
+  margin: 4px 0 20px;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.chip {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+.chip.active {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+.chip.ghost {
+  color: var(--muted);
+}
+.toolbar-spacer {
+  flex: 1;
+}
+.sort {
+  font-size: 13px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sort-sel {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.car-detail {
+  padding-top: 24px;
+}
+.detail {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 26px;
+}
+.gal .main {
+  height: 380px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  background: var(--shimmer);
+  border: 1px solid var(--line);
+}
+.gal .main .sh {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--shimmer) 20%, var(--shimmer-2) 40%, var(--shimmer) 60%);
+}
+.gal .gcount {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(11, 12, 14, 0.55);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 7px;
+}
+.gal .thumbs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+.gal .thumbs .t {
+  height: 74px;
+  border-radius: 9px;
+  background: var(--shimmer);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.gal .thumbs .t.act {
+  border-color: var(--green);
+}
+.gal .thumbs .t.vid::after {
+  content: "▶";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+}
+.d-status {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+.d-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 6px 0 2px;
+}
+.d-sub {
+  color: var(--muted);
+  font-size: 15px;
+}
+.pricebox {
+  background: var(--fill);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 18px 0;
+}
+.pricebox .big {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.pricebox .prow {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 8px;
+}
+.pricebox .prow b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.cta {
+  display: grid;
+  gap: 9px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-green {
+  background: var(--green);
+  color: #fff;
+}
+.btn-soft {
+  background: var(--fill-strong);
+  color: var(--ink);
+}
+.specs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+.specs .c {
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.specs .c .k {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+}
+.specs .c .v {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.car-desc {
+  margin-top: 32px;
+  max-width: 760px;
+}
+.car-desc p {
+  color: var(--ink);
+  line-height: 1.5;
+  margin: 0;
+}
+
 @media (max-width: 900px) {
   .hicon,
   .hbtn-green .lbl {
     display: none;
+  }
+  .detail {
+    grid-template-columns: 1fr;
   }
   .brands {
     grid-template-columns: repeat(2, 1fr);

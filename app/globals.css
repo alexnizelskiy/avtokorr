@@ -1166,3 +1166,163 @@ a {
     display: none;
   }
 }
+
+/* ============ Admin panel ============ */
+.admin-login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--fill);
+  padding: 24px;
+}
+.admin-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+.admin-side {
+  background: #0c121c;
+  color: #fff;
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+}
+.admin-side .logo .wm {
+  color: #fff;
+}
+.admin-side .mk {
+  background: #fff;
+  color: #000;
+}
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.admin-nav a {
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-nav a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.admin-nav a.soon {
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+.admin-nav a.soon em {
+  font-style: normal;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: auto;
+}
+.admin-user {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 14px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  word-break: break-all;
+}
+.admin-logout {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.admin-main {
+  padding: 28px 32px;
+  background: var(--fill);
+}
+.admin-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.admin-stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  color: var(--ink);
+}
+.admin-stat.muted {
+  opacity: 0.6;
+}
+.admin-stat .k {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.admin-stat .v {
+  font-size: 28px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+.admin-stat .tr {
+  font-size: 12px;
+  color: var(--green-dark);
+  margin-top: 4px;
+}
+.tblw {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
+}
+table.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+table.tbl th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 700;
+  padding: 12px 14px;
+  background: var(--fill);
+}
+table.tbl td {
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+}
+.lead-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: var(--green-soft);
+  color: var(--green-dark);
+}
+@media (max-width: 720px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

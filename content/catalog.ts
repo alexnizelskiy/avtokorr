@@ -81,8 +81,15 @@ export const cities = [
   "Новосибирск", "Владивосток", "Нижний Новгород", "Казань", "Самара", "Челябинск",
 ];
 
-export const footerLinks = [
-  "Как купить", "Доставка", "Растаможка", "Гарантия", "Отзывы", "О компании", "Контакты", "Вакансии",
+export const footerLinks: { label: string; href: string }[] = [
+  { label: "Как купить", href: "/how-to-buy" },
+  { label: "Доставка", href: "/delivery" },
+  { label: "Растаможка", href: "/delivery" },
+  { label: "Каталог", href: "/catalog" },
+  { label: "Отзывы", href: "/reviews" },
+  { label: "О компании", href: "/about" },
+  { label: "Контакты", href: "/contacts" },
+  { label: "Вопросы", href: "/faq" },
 ];
 
 // ─── Хелперы ───

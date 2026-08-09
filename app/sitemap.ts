@@ -4,7 +4,7 @@ import { cars } from "@/content/catalog";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const staticRoutes = ["", "/catalog", "/how-to-buy", "/delivery", "/reviews", "/about", "/contacts"];
+  const staticRoutes = ["", "/catalog", "/how-to-buy", "/delivery", "/reviews", "/about", "/contacts", "/faq"];
 
   const base: MetadataRoute.Sitemap = staticRoutes.map((path) => ({
     url: `${site.url}${path}`,

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { site } from "@/lib/site";
 import { cities, footerLinks } from "@/content/catalog";
 
@@ -6,9 +7,9 @@ export function Footer() {
     <footer className="foot">
       <div className="foot-links">
         {footerLinks.map((l) => (
-          <a key={l} href="#">
-            {l}
-          </a>
+          <Link key={l.label} href={l.href}>
+            {l.label}
+          </Link>
         ))}
       </div>
       <div className="foot-cities">

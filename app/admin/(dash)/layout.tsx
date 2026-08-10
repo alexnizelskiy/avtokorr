@@ -19,9 +19,7 @@ export default async function AdminDashLayout({ children }: { children: React.Re
         <nav className="admin-nav">
           <Link href="/admin">Дашборд</Link>
           <Link href="/admin/leads">Заявки</Link>
-          <Link href="/admin/cars" className="soon">
-            Автомобили <em>скоро</em>
-          </Link>
+          <Link href="/admin/cars">Автомобили</Link>
           <Link href="/admin/orders" className="soon">
             Заказы <em>скоро</em>
           </Link>

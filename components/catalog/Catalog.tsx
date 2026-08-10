@@ -1,18 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CarStatus } from "@/types";
-import { cars, catalogTabs, statusLabels } from "@/content/catalog";
+import type { CarCardData, CarStatus } from "@/types";
+import { statusLabels } from "@/lib/car-labels";
 import { CarCard } from "./CarCard";
 
-export function Catalog() {
+const tabs: CarStatus[] = ["IN_STOCK", "IN_TRANSIT", "ON_ORDER", "SOLD"];
+
+export function Catalog({ cars }: { cars: CarCardData[] }) {
   const [active, setActive] = useState<CarStatus>("IN_STOCK");
 
-  const visible = useMemo(() => {
-    // Демо: показываем все, но подсвечиваем выбранную вкладку.
-    // На Этапе 6 — фильтрация выборкой из БД по статусу.
-    return cars;
-  }, []);
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const car of cars) c[car.status] = (c[car.status] ?? 0) + 1;
+    return c;
+  }, [cars]);
+
+  const visible = useMemo(() => cars.filter((c) => c.status === active), [cars, active]);
 
   return (
     <section className="section cat">
@@ -20,23 +24,27 @@ export function Catalog() {
         Каталог автомобилей
       </h2>
       <div className="cat-tabs" role="tablist">
-        {catalogTabs.map((t) => (
+        {tabs.map((status) => (
           <button
-            key={t.status}
+            key={status}
             role="tab"
-            aria-selected={active === t.status}
+            aria-selected={active === status}
             className="cat-tab"
-            onClick={() => setActive(t.status)}
+            onClick={() => setActive(status)}
           >
-            {statusLabels[t.status]} <span className="c num">{t.count}</span>
+            {statusLabels[status]} <span className="c num">{counts[status] ?? 0}</span>
           </button>
         ))}
       </div>
-      <div className="grid">
-        {visible.map((car) => (
-          <CarCard key={car.id} car={car} />
-        ))}
-      </div>
+      {visible.length > 0 ? (
+        <div className="grid">
+          {visible.map((car) => (
+            <CarCard key={car.id} car={car} />
+          ))}
+        </div>
+      ) : (
+        <p style={{ color: "var(--muted)" }}>В этой категории пока нет автомобилей.</p>
+      )}
     </section>
   );
 }

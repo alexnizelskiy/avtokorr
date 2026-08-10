@@ -4,14 +4,19 @@ import { PopularBrands } from "@/components/sections/PopularBrands";
 import { Catalog } from "@/components/catalog/Catalog";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { site } from "@/lib/site";
+import { listCarsForCatalog } from "@/services/cars";
+import { toCarDetail } from "@/lib/car-map";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const cars = (await listCarsForCatalog()).map(toCarDetail);
   return (
     <>
       <Hero />
       <Stories />
       <PopularBrands />
-      <Catalog />
+      <Catalog cars={cars} />
       <div className="section cat-city">
         Автомобили в <span aria-hidden>📍</span> {site.city}
       </div>

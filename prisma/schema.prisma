@@ -127,6 +127,9 @@ model Car {
   purchasePlace  String?                      // место покупки
 
   featured  Boolean  @default(false)
+  fairPrice Boolean  @default(false)  // бейдж «Справедливая цена»
+  isNew     Boolean  @default(false)  // бейдж «Новый»
+  cover     String?                   // обложка (URL), до подключения мультизагрузки
   views     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

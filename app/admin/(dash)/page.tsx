@@ -4,9 +4,10 @@ import { prisma } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [newLeads, totalLeads] = await Promise.all([
+  const [newLeads, totalLeads, totalCars] = await Promise.all([
     prisma.lead.count({ where: { status: "NEW" } }),
     prisma.lead.count(),
+    prisma.car.count(),
   ]);
 
   return (
@@ -22,11 +23,11 @@ export default async function AdminDashboard() {
           <div className="k">Всего заявок</div>
           <div className="v num">{totalLeads}</div>
         </div>
-        <div className="admin-stat muted">
+        <Link href="/admin/cars" className="admin-stat">
           <div className="k">Автомобили</div>
-          <div className="v">—</div>
-          <div className="tr">раздел в разработке</div>
-        </div>
+          <div className="v num">{totalCars}</div>
+          <div className="tr">в каталоге</div>
+        </Link>
         <div className="admin-stat muted">
           <div className="k">Заказы</div>
           <div className="v">—</div>

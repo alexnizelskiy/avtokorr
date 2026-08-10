@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
-import { cars } from "@/content/catalog";
+import { listCarsForCatalog } from "@/services/cars";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticRoutes = ["", "/catalog", "/how-to-buy", "/delivery", "/reviews", "/about", "/contacts", "/faq"];
 
@@ -13,12 +15,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : 0.7,
   }));
 
-  const carRoutes: MetadataRoute.Sitemap = cars.map((c) => ({
-    url: `${site.url}/catalog/${c.slug}`,
-    lastModified: now,
-    changeFrequency: "daily",
-    priority: 0.8,
-  }));
+  let carRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const cars = await listCarsForCatalog();
+    carRoutes = cars.map((c) => ({
+      url: `${site.url}/catalog/${c.slug}`,
+      lastModified: c.updatedAt,
+      changeFrequency: "daily",
+      priority: 0.8,
+    }));
+  } catch {
+    // если БД недоступна при сборке — отдаём хотя бы статические маршруты
+  }
 
   return [...base, ...carRoutes];
 }

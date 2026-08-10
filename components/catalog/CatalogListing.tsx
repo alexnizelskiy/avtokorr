@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { cars, countryLabels, sortOptions, priceToNumber } from "@/content/catalog";
-import type { Country } from "@/types";
+import { sortOptions, priceToNumber } from "@/content/catalog";
+import { countryLabels } from "@/lib/car-labels";
+import type { CarDetail, Country } from "@/types";
 import { CarCard } from "./CarCard";
 
 const countries: Country[] = ["KOREA", "JAPAN", "CHINA"];
 
-export function CatalogListing() {
+export function CatalogListing({ cars }: { cars: CarDetail[] }) {
   const [country, setCountry] = useState<Country | "ALL">("ALL");
   const [sort, setSort] = useState("popular");
 

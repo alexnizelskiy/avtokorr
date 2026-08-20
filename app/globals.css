@@ -1915,3 +1915,115 @@ html {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============ Hero v2 (премиум-баннер по референсам) ============ */
+.hero2 {
+  position: relative;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero2-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 40%;
+  transform: scale(1.02);
+}
+.hero2::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 10, 14, 0.85) 0%,
+    rgba(8, 10, 14, 0.6) 45%,
+    rgba(8, 10, 14, 0.15) 100%
+  );
+}
+.hero2-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1220px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 64px 24px 88px;
+  color: #fff;
+}
+.hero2-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+.hero2-title {
+  font-size: clamp(30px, 4.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 14px 0 0;
+  max-width: 17ch;
+  color: #fff;
+  text-wrap: balance;
+}
+.hero2-sub {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 18px 0 0;
+  max-width: 46ch;
+  line-height: 1.45;
+}
+.hero2-cta {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+.btn-outline-light {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.hero2-trust {
+  display: flex;
+  gap: 24px;
+  margin-top: 34px;
+  flex-wrap: wrap;
+}
+.hero2-trust span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.88);
+}
+.hero2-trust svg {
+  color: var(--green);
+}
+
+/* плавающая строка поиска поверх низа баннера */
+.hero {
+  margin-top: -48px;
+  position: relative;
+  z-index: 3;
+  padding-top: 0;
+}
+.hero .hero-col {
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgba(11, 12, 14, 0.16);
+  padding: 20px 20px 10px;
+}
+@media (max-width: 640px) {
+  .hero2 {
+    min-height: 440px;
+  }
+  .hero2-trust {
+    gap: 14px;
+  }
+}

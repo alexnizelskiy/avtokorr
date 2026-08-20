@@ -60,11 +60,30 @@ export async function listCarsForCatalog(opts?: { country?: Country; status?: Ca
 }
 
 export async function getCarBySlug(slug: string) {
-  return prisma.car.findUnique({ where: { slug } });
+  return prisma.car.findUnique({
+    where: { slug },
+    include: { media: { orderBy: { position: "asc" } } },
+  });
 }
 
 export async function getCarById(id: string) {
-  return prisma.car.findUnique({ where: { id } });
+  return prisma.car.findUnique({
+    where: { id },
+    include: { media: { orderBy: { position: "asc" } } },
+  });
+}
+
+/** Добавить фотографии авто (после загрузки в Blob). */
+export async function addCarPhotos(carId: string, urls: string[]) {
+  if (urls.length === 0) return;
+  const base = await prisma.carMedia.count({ where: { carId } });
+  await prisma.carMedia.createMany({
+    data: urls.map((url, i) => ({ carId, url, type: "IMAGE" as const, position: base + i })),
+  });
+}
+
+export async function deleteCarPhoto(id: string) {
+  return prisma.carMedia.delete({ where: { id } });
 }
 
 /** Админ: все авто для таблицы. */

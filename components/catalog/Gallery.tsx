@@ -3,46 +3,38 @@
 import { useState } from "react";
 import { ImageSquare } from "@phosphor-icons/react";
 
-export function Gallery({
-  photos,
-  videos,
-  cover,
-}: {
-  photos: number;
-  videos: number;
-  cover?: string | null;
-}) {
+export function Gallery({ images, videos = 0 }: { images: string[]; videos?: number }) {
   const [active, setActive] = useState(0);
-  const thumbs = Array.from({ length: 5 });
+  const hasImages = images.length > 0;
+
   return (
     <div className="gal">
       <div className="main">
-        {cover ? (
+        {hasImages ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img className="cover" src={cover} alt="Фото автомобиля" />
+          <img className="cover" src={images[active]} alt="Фото автомобиля" />
         ) : (
           <div className="sh" />
         )}
         <span className="gcount">
-          <ImageSquare size={14} /> {photos || (cover ? 1 : 0)} фото
-          {videos > 0 ? ` · ${videos} видео` : ""}
+          <ImageSquare size={14} /> {images.length} фото{videos > 0 ? ` · ${videos} видео` : ""}
         </span>
       </div>
-      <div className="thumbs">
-        {thumbs.map((_, i) => (
-          <button
-            key={i}
-            className={`t${i === active ? " act" : ""}${i === 4 && videos > 0 ? " vid" : ""}`}
-            aria-label={`Фото ${i + 1}`}
-            onClick={() => setActive(i)}
-          >
-            {i === 0 && cover ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className="cover" src={cover} alt="" />
-            ) : null}
-          </button>
-        ))}
-      </div>
+      {hasImages && images.length > 1 && (
+        <div className="thumbs">
+          {images.slice(0, 6).map((url, i) => (
+            <button
+              key={url}
+              className={`t${i === active ? " act" : ""}`}
+              aria-label={`Фото ${i + 1}`}
+              onClick={() => setActive(i)}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="cover" src={url} alt="" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

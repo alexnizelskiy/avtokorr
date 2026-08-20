@@ -3,7 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { createCar, updateCar, deleteCar, type CarInput } from "@/services/cars";
+import {
+  createCar,
+  updateCar,
+  deleteCar,
+  addCarPhotos,
+  deleteCarPhoto,
+  type CarInput,
+} from "@/services/cars";
 import { saveImage } from "@/lib/storage";
 import type { CarStatus, Country } from "@/types";
 
@@ -14,19 +21,12 @@ function slugify(s: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-async function parse(form: FormData): Promise<CarInput> {
+function parse(form: FormData): CarInput {
   const brand = String(form.get("brand") || "").trim();
   const model = String(form.get("model") || "").trim();
   const year = Number(form.get("year") || 0);
   let slug = String(form.get("slug") || "").trim();
   if (!slug) slug = slugify(`${brand}-${model}-${year}`);
-
-  // Обложка: загруженный файл имеет приоритет над введённым URL.
-  let cover = String(form.get("cover") || "").trim() || undefined;
-  const coverFile = form.get("coverFile");
-  if (coverFile instanceof File && coverFile.size > 0) {
-    cover = await saveImage(coverFile, "cars");
-  }
 
   return {
     brand,
@@ -45,10 +45,18 @@ async function parse(form: FormData): Promise<CarInput> {
     vin: String(form.get("vin") || "").trim() || undefined,
     auctionGrade: String(form.get("auctionGrade") || "").trim() || undefined,
     description: String(form.get("description") || "").trim() || undefined,
-    cover,
+    cover: String(form.get("cover") || "").trim() || undefined,
     fairPrice: form.get("fairPrice") === "on",
     isNew: form.get("isNew") === "on",
   };
+}
+
+/** Загрузить прикреплённые фото и вернуть их URL. */
+async function uploadPhotos(form: FormData): Promise<string[]> {
+  const files = form.getAll("photoFiles").filter((f): f is File => f instanceof File && f.size > 0);
+  const urls: string[] = [];
+  for (const f of files) urls.push(await saveImage(f, "cars"));
+  return urls;
 }
 
 async function requireAdmin() {
@@ -58,7 +66,11 @@ async function requireAdmin() {
 
 export async function createCarAction(form: FormData) {
   await requireAdmin();
-  await createCar(await parse(form));
+  const photoUrls = await uploadPhotos(form);
+  const input = parse(form);
+  if (!input.cover && photoUrls[0]) input.cover = photoUrls[0]; // первое фото — обложка
+  const car = await createCar(input);
+  await addCarPhotos(car.id, photoUrls);
   revalidatePath("/admin/cars");
   revalidatePath("/catalog");
   redirect("/admin/cars");
@@ -66,15 +78,26 @@ export async function createCarAction(form: FormData) {
 
 export async function updateCarAction(id: string, form: FormData) {
   await requireAdmin();
-  await updateCar(id, await parse(form));
+  const photoUrls = await uploadPhotos(form);
+  const input = parse(form);
+  if (!input.cover && photoUrls[0]) input.cover = photoUrls[0];
+  await updateCar(id, input);
+  await addCarPhotos(id, photoUrls);
   revalidatePath("/admin/cars");
   revalidatePath("/catalog");
-  redirect("/admin/cars");
+  redirect(`/admin/cars/${id}/edit`);
 }
 
 export async function deleteCarAction(id: string) {
   await requireAdmin();
   await deleteCar(id);
   revalidatePath("/admin/cars");
+  revalidatePath("/catalog");
+}
+
+export async function deletePhotoAction(carId: string, photoId: string) {
+  await requireAdmin();
+  await deleteCarPhoto(photoId);
+  revalidatePath(`/admin/cars/${carId}/edit`);
   revalidatePath("/catalog");
 }

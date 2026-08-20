@@ -1,10 +1,11 @@
-import type { Car } from "@prisma/client";
+import type { Car, CarMedia } from "@prisma/client";
 import {
   transmissionOptions,
   drivetrainOptions,
   statusOptions,
   countryOptions,
 } from "@/lib/car-labels";
+import { deletePhotoAction } from "@/app/admin/(dash)/cars/actions";
 
 export function CarForm({
   action,
@@ -12,10 +13,11 @@ export function CarForm({
   submitLabel = "Сохранить",
 }: {
   action: (form: FormData) => void | Promise<void>;
-  car?: Car;
+  car?: Car & { media?: CarMedia[] };
   submitLabel?: string;
 }) {
   const v = <T,>(x: T | null | undefined, d: T | string = "") => (x ?? d) as string;
+  const media = car?.media ?? [];
 
   return (
     <form action={action} className="car-form">
@@ -109,16 +111,24 @@ export function CarForm({
           <input name="cover" defaultValue={v(car?.cover)} placeholder="https://…" />
         </label>
         <label className="field">
-          <span>Обложка — загрузить фото</span>
-          <input name="coverFile" type="file" accept="image/jpeg,image/png,image/webp" />
+          <span>Фото автомобиля (можно несколько)</span>
+          <input name="photoFiles" type="file" accept="image/jpeg,image/png,image/webp" multiple />
         </label>
       </div>
 
-      {car?.cover && (
-        <div className="cover-preview">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={car.cover} alt="Текущая обложка" />
-          <span>Текущая обложка (загрузка нового файла заменит её)</span>
+      {media.length > 0 && (
+        <div className="media-grid">
+          {media.map((m) => (
+            <div key={m.id} className="media-item">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.url} alt="Фото авто" />
+              <form action={deletePhotoAction.bind(null, car!.id, m.id)}>
+                <button type="submit" className="media-del" aria-label="Удалить фото">
+                  ✕
+                </button>
+              </form>
+            </div>
+          ))}
         </div>
       )}
 

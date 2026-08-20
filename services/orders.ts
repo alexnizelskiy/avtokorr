@@ -65,3 +65,22 @@ export async function addStatusUpdate(orderId: string, stage: OrderStage, commen
 export async function countOrders() {
   return prisma.order.count();
 }
+
+// ─── Клиентские выборки (только свои заказы) ───
+
+export async function listClientOrders(userId: string) {
+  return prisma.order.findMany({
+    where: { clientId: userId },
+    orderBy: { createdAt: "desc" },
+    include: { car: true },
+  });
+}
+
+export async function getClientOrder(userId: string, orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { car: true, events: { orderBy: { createdAt: "asc" } } },
+  });
+  if (!order || order.clientId !== userId) return null; // защита: чужой заказ не отдаём
+  return order;
+}

@@ -11,10 +11,11 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 const COOKIE = "ak_session";
 const SESSION_DAYS = 14;
 
-export type Role = "ADMIN" | "MANAGER";
+export type Role = "ADMIN" | "MANAGER" | "CLIENT";
 export interface Session {
   sub: string; // идентификатор (телефон/почта)
   role: Role;
+  uid?: string; // id пользователя в БД (для клиента)
   exp: number; // unix seconds
 }
 
@@ -86,10 +87,29 @@ export async function createAdminSession(sub: string): Promise<void> {
   });
 }
 
+export async function createClientSession(userId: string, phone: string): Promise<void> {
+  const exp = Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400;
+  const token = sign({ sub: phone, uid: userId, role: "CLIENT", exp });
+  const store = await cookies();
+  store.set(COOKIE, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_DAYS * 86400,
+  });
+}
+
 export async function getSession(): Promise<Session | null> {
   const store = await cookies();
   const token = store.get(COOKIE)?.value;
   return token ? verify(token) : null;
+}
+
+/** Сессия клиента (с uid). null, если не залогинен как клиент. */
+export async function getClientSession(): Promise<Session | null> {
+  const s = await getSession();
+  return s && s.role === "CLIENT" && s.uid ? s : null;
 }
 
 export async function destroySession(): Promise<void> {

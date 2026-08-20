@@ -1,8 +1,19 @@
 import Link from "next/link";
-import { MagnifyingGlass, MapPin, Plus, Sparkle, Heart, List } from "@phosphor-icons/react/dist/ssr";
+import {
+  MagnifyingGlass,
+  MapPin,
+  Plus,
+  Sparkle,
+  Heart,
+  List,
+  UserCircle,
+} from "@phosphor-icons/react/dist/ssr";
 import { site } from "@/lib/site";
+import { getSession } from "@/lib/auth";
 
-export function Header() {
+export async function Header() {
+  const session = await getSession();
+  const isClient = session?.role === "CLIENT";
   return (
     <header className="hdr">
       <div className="hdr-in">
@@ -34,9 +45,15 @@ export function Header() {
           <Heart size={22} className="g" />
           Избранное
         </Link>
-        <Link className="hlogin" href="/auth">
-          Войти
-        </Link>
+        {isClient ? (
+          <Link className="hlogin" href="/profile">
+            <UserCircle size={20} weight="fill" style={{ marginRight: 6 }} /> Кабинет
+          </Link>
+        ) : (
+          <Link className="hlogin" href="/auth">
+            Войти
+          </Link>
+        )}
       </div>
     </header>
   );

@@ -20,9 +20,7 @@ export default async function AdminDashLayout({ children }: { children: React.Re
           <Link href="/admin">Дашборд</Link>
           <Link href="/admin/leads">Заявки</Link>
           <Link href="/admin/cars">Автомобили</Link>
-          <Link href="/admin/orders" className="soon">
-            Заказы <em>скоро</em>
-          </Link>
+          <Link href="/admin/orders">Заказы</Link>
         </nav>
         <div className="admin-user">
           <span>{session.sub}</span>

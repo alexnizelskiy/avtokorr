@@ -105,10 +105,22 @@ export function CarForm({
           <input name="slug" defaultValue={v(car?.slug)} placeholder="авто-заполнится" />
         </label>
         <label className="field">
-          <span>Обложка (URL картинки)</span>
+          <span>Обложка — ссылка (необязательно)</span>
           <input name="cover" defaultValue={v(car?.cover)} placeholder="https://…" />
         </label>
+        <label className="field">
+          <span>Обложка — загрузить фото</span>
+          <input name="coverFile" type="file" accept="image/jpeg,image/png,image/webp" />
+        </label>
       </div>
+
+      {car?.cover && (
+        <div className="cover-preview">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={car.cover} alt="Текущая обложка" />
+          <span>Текущая обложка (загрузка нового файла заменит её)</span>
+        </div>
+      )}
 
       <label className="field">
         <span>Описание</span>

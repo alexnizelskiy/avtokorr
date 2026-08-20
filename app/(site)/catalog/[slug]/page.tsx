@@ -46,7 +46,7 @@ export default async function CarPage({ params }: { params: Promise<{ slug: stri
         </div>
 
         <div className="detail">
-          <Gallery photos={car.photos} videos={car.videos} />
+          <Gallery photos={car.photos} videos={car.videos} cover={car.cover} />
 
           <aside className="detail-aside">
             <div className="d-status">

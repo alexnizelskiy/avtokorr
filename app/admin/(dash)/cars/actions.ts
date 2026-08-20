@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { createCar, updateCar, deleteCar, type CarInput } from "@/services/cars";
+import { saveImage } from "@/lib/storage";
 import type { CarStatus, Country } from "@/types";
 
 function slugify(s: string): string {
@@ -13,12 +14,19 @@ function slugify(s: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function parse(form: FormData): CarInput {
+async function parse(form: FormData): Promise<CarInput> {
   const brand = String(form.get("brand") || "").trim();
   const model = String(form.get("model") || "").trim();
   const year = Number(form.get("year") || 0);
   let slug = String(form.get("slug") || "").trim();
   if (!slug) slug = slugify(`${brand}-${model}-${year}`);
+
+  // Обложка: загруженный файл имеет приоритет над введённым URL.
+  let cover = String(form.get("cover") || "").trim() || undefined;
+  const coverFile = form.get("coverFile");
+  if (coverFile instanceof File && coverFile.size > 0) {
+    cover = await saveImage(coverFile, "cars");
+  }
 
   return {
     brand,
@@ -37,7 +45,7 @@ function parse(form: FormData): CarInput {
     vin: String(form.get("vin") || "").trim() || undefined,
     auctionGrade: String(form.get("auctionGrade") || "").trim() || undefined,
     description: String(form.get("description") || "").trim() || undefined,
-    cover: String(form.get("cover") || "").trim() || undefined,
+    cover,
     fairPrice: form.get("fairPrice") === "on",
     isNew: form.get("isNew") === "on",
   };
@@ -50,7 +58,7 @@ async function requireAdmin() {
 
 export async function createCarAction(form: FormData) {
   await requireAdmin();
-  await createCar(parse(form));
+  await createCar(await parse(form));
   revalidatePath("/admin/cars");
   revalidatePath("/catalog");
   redirect("/admin/cars");
@@ -58,7 +66,7 @@ export async function createCarAction(form: FormData) {
 
 export async function updateCarAction(id: string, form: FormData) {
   await requireAdmin();
-  await updateCar(id, parse(form));
+  await updateCar(id, await parse(form));
   revalidatePath("/admin/cars");
   revalidatePath("/catalog");
   redirect("/admin/cars");

@@ -22,6 +22,7 @@ export function toCarDetail(car: Car): CarDetail {
     country: car.country,
     fairPrice: car.fairPrice,
     isNew: car.isNew,
+    cover: car.cover,
     engine: car.engine,
     transmission: transmissionLabels[car.transmission] ?? car.transmission,
     drivetrain: drivetrainLabels[car.drivetrain] ?? car.drivetrain,

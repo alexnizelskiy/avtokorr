@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
+import { Manrope } from "next/font/google";
 import { site } from "@/lib/site";
 import "./globals.css";
+
+const manrope = Manrope({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -24,7 +32,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={manrope.variable}>
       <body>{children}</body>
     </html>
   );

@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Heart, TrendUp, TrendDown } from "@phosphor-icons/react";
 import type { CarCardData } from "@/types";
-import { statusLabels } from "@/content/catalog";
+import { statusLabels } from "@/lib/car-labels";
 
 function badge(car: CarCardData): { cls: string; label: string } | null {
   if (car.isNew) return { cls: "new", label: "Новый" };
@@ -20,7 +21,12 @@ export function CarCard({ car }: { car: CarCardData }) {
   return (
     <Link className="card" href={`/catalog/${car.slug}`}>
       <div className="ph">
-        <div className="sh" />
+        {car.cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="cover" src={car.cover} alt={car.title} loading="lazy" />
+        ) : (
+          <div className="sh" />
+        )}
         <button
           className={`heart${fav ? " on" : ""}`}
           aria-label="В избранное"
@@ -29,14 +35,14 @@ export function CarCard({ car }: { car: CarCardData }) {
             setFav((v) => !v);
           }}
         >
-          {fav ? "♥" : "♡"}
+          <Heart size={18} weight={fav ? "fill" : "regular"} />
         </button>
         {b && <span className={`cbadge ${b.cls}`}>{b.label}</span>}
       </div>
       <div className="price num">
         {car.price}
-        {car.priceTrend === "up" && <span className="up">↗</span>}
-        {car.priceTrend === "down" && <span className="dn">↘</span>}
+        {car.priceTrend === "up" && <TrendUp size={16} className="up" />}
+        {car.priceTrend === "down" && <TrendDown size={16} className="dn" />}
       </div>
       <div className="ttl">{car.title}</div>
       <div className="meta num">

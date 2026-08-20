@@ -36,9 +36,16 @@ body {
   margin: 0;
   background: var(--surface);
   color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+/* Phosphor SVG-иконки: ровное выравнивание с текстом */
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
 }
 a {
   color: inherit;
@@ -1390,4 +1397,104 @@ table.tbl td {
   .car-form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============ Дизайн-пасс: премиум-полировка (вариант B) ============ */
+/* Заголовки — плотнее и тяжелее (Manrope) */
+.hero-title,
+.sec-title,
+.page-title,
+.d-title,
+.admin-title {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hero-title {
+  font-weight: 800;
+}
+
+/* Обложка авто в карточке */
+.card .ph .cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Карточка: подъём + тонированная тень (не чёрная) */
+.card {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+  will-change: transform;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px -10px rgba(12, 18, 28, 0.18);
+}
+.card .ph {
+  transition: box-shadow 0.22s ease;
+}
+
+/* Иконки-сервисы: мягкий ховер */
+.svc-item .ico {
+  color: var(--ink);
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.svc-item:hover .ico {
+  background: #dfe1e4;
+  transform: translateY(-2px);
+}
+
+/* Хедер-иконки */
+.hicon .g {
+  color: var(--ink);
+}
+.hbtn-green .plus {
+  color: #fff;
+}
+.hsearch svg,
+.hsearch .geo svg {
+  color: var(--muted);
+}
+.hsearch .geo svg {
+  color: var(--green-dark);
+}
+
+/* Кнопки: тактильный отклик */
+.btn,
+.hbtn-green,
+.hlogin,
+.fchip,
+.chip {
+  transition: transform 0.12s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+.btn:active,
+.hlogin:active,
+.chip:active {
+  transform: translateY(1px);
+}
+.btn-green {
+  box-shadow: 0 8px 20px -8px rgba(54, 181, 85, 0.55);
+}
+.btn-green:hover {
+  background: var(--green-dark);
+}
+
+/* Плавные появления карточек при заходе секции в вид */
+@media (prefers-reduced-motion: no-preference) {
+  .grid .card {
+    animation: card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .grid .card:nth-child(2) { animation-delay: 0.04s; }
+  .grid .card:nth-child(3) { animation-delay: 0.08s; }
+  .grid .card:nth-child(4) { animation-delay: 0.12s; }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Сглаженный скролл к якорям (#lead) */
+html {
+  scroll-behavior: smooth;
 }

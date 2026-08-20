@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MagnifyingGlass, MapPin, Plus, Sparkle, Heart, List } from "@phosphor-icons/react/dist/ssr";
 import { site } from "@/lib/site";
 
 export function Header() {
@@ -10,28 +11,28 @@ export function Header() {
           <span className="wm">автокорр</span>
         </Link>
         <button className="burger" aria-label="Меню">
-          <span>
-            <i />
-            <i />
-            <i />
-          </span>
+          <List size={20} weight="bold" />
         </button>
-        <div className="hsearch">
-          <span aria-hidden>🔍</span>
+        <Link className="hsearch" href="/catalog">
+          <MagnifyingGlass size={20} />
           <span className="txt">Найти автомобиль</span>
           <span className="geo">
-            📍 {site.city} <span className="km">+300 км</span>
+            <MapPin size={16} weight="fill" /> {site.city} <span className="km">+300 км</span>
           </span>
-        </div>
+        </Link>
         <Link className="hbtn-green" href="/#lead">
-          <span className="plus">＋</span>
+          <span className="plus">
+            <Plus size={22} weight="bold" />
+          </span>
           <span className="lbl">Оставить заявку</span>
         </Link>
         <Link className="hicon" href="/#lead">
-          <span className="g">✨</span>Подбор AI
+          <Sparkle size={22} className="g" />
+          Подбор AI
         </Link>
         <Link className="hicon" href="/profile/favorites">
-          <span className="g">♡</span>Избранное
+          <Heart size={22} className="g" />
+          Избранное
         </Link>
         <Link className="hlogin" href="/auth">
           Войти

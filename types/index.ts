@@ -13,6 +13,7 @@ export interface CarCardData {
   fairPrice?: boolean; // бейдж «Справедливая цена»
   isNew?: boolean; // бейдж «Новый»
   priceTrend?: "up" | "down";
+  cover?: string | null; // обложка (URL)
 }
 
 /** Полные данные для страницы автомобиля. */

@@ -3,6 +3,7 @@ import { Stories } from "@/components/sections/Stories";
 import { PopularBrands } from "@/components/sections/PopularBrands";
 import { Catalog } from "@/components/catalog/Catalog";
 import { LeadForm } from "@/components/forms/LeadForm";
+import { MapPin } from "@phosphor-icons/react/dist/ssr";
 import { site } from "@/lib/site";
 import { listCarsForCatalog } from "@/services/cars";
 import { toCarDetail } from "@/lib/car-map";
@@ -18,7 +19,7 @@ export default async function HomePage() {
       <PopularBrands />
       <Catalog cars={cars} />
       <div className="section cat-city">
-        Автомобили в <span aria-hidden>📍</span> {site.city}
+        Автомобили в <MapPin size={22} weight="fill" style={{ color: "var(--green-dark)" }} /> {site.city}
       </div>
       <section id="lead" className="section" style={{ margin: "56px auto" }}>
         <div className="lead-wrap">
